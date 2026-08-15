@@ -53,10 +53,11 @@ app.MapPost("/auth/login", (HttpContext http, AppDatabase db, SessionStore sessi
 // ── Utloggning ─────────────────────────────────────────────────────────────
 app.MapPost("/auth/logout", (HttpContext http, SessionStore sessions) =>
 {
+    var token = http.Request.Cookies[CurrentUser.CookieName];
+    sessions.Invalidate(token);
     http.Response.Cookies.Delete(CurrentUser.CookieName);
-
-    return Results.Redirect("/");
-}).DisableAntiforgery();
+    return Results.Redirect("/login");
+});
 
 // ── Spara profiltext ───────────────────────────────────────────────────────
 app.MapPost("/profile/save", (AppDatabase db, CurrentUser current,
